@@ -1,5 +1,5 @@
-#ifndef EVENT_MNGR_H
-#define EVENT_MNGR_H
+#ifndef GUARD_SIMLIB_EVENT_MNGR_H
+#define GUARD_SIMLIB_EVENT_MNGR_H
 
 #include "Message.h"
 #include "Component.h"
@@ -13,7 +13,7 @@
 #include <list>
 
 
-namespace PubSub
+namespace SimLib
 {
     class Endpoint;
 
@@ -39,6 +39,6 @@ namespace PubSub
         std::mutex m_mutex;
         std::condition_variable m_condition;
     };
-} // namespace PubSub
+} // namespace SimLib
 
-#endif // EVENT_MNGR_H
+#endif // GUARD_SIMLIB_EVENT_MNGR_H

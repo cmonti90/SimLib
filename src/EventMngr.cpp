@@ -1,7 +1,7 @@
 
 #include "EventMngr.h"
 
-namespace PubSub
+namespace SimLib
 {
     void EventMngr::subscribe( Endpoint* endpoint, const Message_Name msgName )
     {
@@ -74,4 +74,4 @@ namespace PubSub
         m_condition.notify_one();
     }
 
-} // namespace PubSub
+} // namespace SimLib

@@ -1,10 +1,12 @@
-set(target PubSub)
-set(exportedTarget PubSubTarget)
+set(target SimLib)
+set(exportedTarget SimLibTarget)
 
 set(version 1.0.0)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
+
+find_package(PubSub CONFIG REQUIRED)
 
 file(GLOB_RECURSE SOURCES_C RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cc)
 file(GLOB_RECURSE SOURCES_CPP RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
@@ -20,12 +22,14 @@ add_link_options(-lpthread)
 
 add_library(${target} SHARED ${SOURCES} ${SOURCES})
 
+target_link_libraries(${target} PUBLIC PubSub)
+
 set_property(TARGET ${target} PROPERTY VERSION ${version})
 set_property(TARGET ${target} PROPERTY SOVERSION 1)
 set_property(TARGET ${target} PROPERTY
-  INTERFACE_PubSub_MAJOR_VERSION 1)
+  INTERFACE_SimLib_MAJOR_VERSION 1)
 set_property(TARGET ${target} APPEND PROPERTY
-  COMPATIBLE_INTERFACE_STRING PubSub_MAJOR_VERSION
+  COMPATIBLE_INTERFACE_STRING SimLib_MAJOR_VERSION
 )
 
 macro(includeSubDirs targ curdir instdir installDirs)

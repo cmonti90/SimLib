@@ -1,7 +1,7 @@
 
 #include "Time.h"
 
-namespace PubSub
+namespace SimLib
 {
     Time::Time() : timeNow( 0.0 ), counter( 0u ), mtx(), cv()
     {
@@ -52,4 +52,4 @@ namespace PubSub
         return counter;
     }
 
-} // namespace PubSub
+} // namespace SimLib

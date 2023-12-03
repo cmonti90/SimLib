@@ -1,10 +1,10 @@
-#ifndef D7319A1C_DBBF_4452_A940_C7793A94A396
-#define D7319A1C_DBBF_4452_A940_C7793A94A396
+#ifndef GUARD_SIMLIB_TIME_H
+#define GUARD_SIMLIB_TIME_H
 
 #include <mutex>
 #include <condition_variable>
 
-namespace PubSub
+namespace SimLib
 {
     class Time
     {
@@ -29,6 +29,6 @@ namespace PubSub
         mutable std::mutex mtx;
         mutable std::condition_variable cv;
     };
-} // namespace PubSub
+} // namespace SimLib
 
-#endif /* D7319A1C_DBBF_4452_A940_C7793A94A396 */
+#endif /* GUARD_SIMLIB_TIME_H */
