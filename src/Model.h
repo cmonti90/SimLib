@@ -39,7 +39,7 @@ namespace SimLib
 
         const ModelLabel label;
 
-        std::shared_ptr< QueueMngr > m_queue_mngr;
+        std::shared_ptr< PubSub::QueueMngr > m_queue_mngr;
 
         Model( const Model& ) = delete;
         Model& operator=( const Model& ) = delete;

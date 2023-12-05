@@ -6,6 +6,8 @@ set(version 1.0.0)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
+list(APPEND CMAKE_PREFIX_PATH $ENV{PUBSUBLIB_DIR})
+
 find_package(PubSub CONFIG REQUIRED)
 
 file(GLOB_RECURSE SOURCES_C RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cc)
