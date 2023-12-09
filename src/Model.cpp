@@ -20,11 +20,11 @@ namespace SimLib
 
     Model* ReferenceRequest::getReference( ModelLabel label )
     {
-        for ( auto& ref : m_referenceRequests )
+        for ( auto& ref : m_references )
         {
-            if ( ref == label )
+            if ( ref.first == label )
             {
-                return nullptr;
+                return ref.second;
             }
         }
 

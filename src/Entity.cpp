@@ -162,7 +162,7 @@ namespace SimLib
                 {
                     if ( modelIdx.first->getModelLabel() == refReqIdx )
                     {
-                        refReq.m_references.push_back( std::pair< ModelLabel, std::shared_ptr< Model > >( refReqIdx, modelIdx.first ) );
+                        refReq.m_references.push_back( std::pair< ModelLabel, Model* >( refReqIdx, modelIdx.first ) );
                         break;
                     }
                 }

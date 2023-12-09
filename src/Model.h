@@ -13,7 +13,7 @@ namespace SimLib
     typedef std::string             ModelLabel;
     typedef double                  ModelRate;
     typedef std::list< ModelLabel > ReferenceRequestList;
-    typedef std::list< std::pair< ModelLabel, std::shared_ptr< Model > > > ReferenceList;
+    typedef std::list< std::pair< ModelLabel, Model* > > ReferenceList;
 
     class ReferenceRequest
     {
