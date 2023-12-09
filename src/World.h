@@ -1,18 +1,38 @@
-#ifndef C3608206_C16F_4843_87F5_4C7C97F2056F
-#define C3608206_C16F_4843_87F5_4C7C97F2056F
+#ifndef GUARD_WORLD_H
+#define GUARD_WORLD_H
 
+#include "Entity.h"
+#include "Time.h"
+
+#include <memory>
+#include <list>
 
 namespace SimLib
 {
     class World
     {
-    public:
+      public:
+        World();
+        virtual ~World();
 
-    protected:
-    
-    private:
+        void addEntity( Entity* entity );
+        void removeEntity( Entity* entity );
+
+        virtual void createWorld() = 0;
+
+        void initialize();
+        void go();
+        void iterate();
+        void finalize();
+
+      private:
+        typedef std::list< Entity* > EntityList;
+
+        std::shared_ptr< Time > m_time;
+
+        EntityList m_entities;
 
     };
 } // namespace SimLib
 
-#endif /* C3608206_C16F_4843_87F5_4C7C97F2056F */
+#endif /* GUARD_WORLD_H */

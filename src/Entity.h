@@ -14,12 +14,13 @@
 namespace SimLib
 {
     typedef unsigned int ModelOrder;
-    typedef std::list< std::pair< std::shared_ptr< Model >, ModelOrder > > ModelList;
-    typedef std::list< std::shared_ptr< PubSub::Module > > AppList;
+    typedef std::list< std::pair< Model*, ModelOrder > > ModelList;
+    typedef std::list< PubSub::Module* > AppList;
 
     class Entity
     {
       private:
+
         enum class EntityState
         {
             BOOT,
@@ -32,22 +33,26 @@ namespace SimLib
         };
 
       public:
+
         Entity() = delete;
         explicit Entity( const double runRate );
-        virtual ~Entity() = default;
+        virtual ~Entity();
 
-        void addModel( std::shared_ptr< Model >& model, const ModelOrder order );
-        void removeModel( std::shared_ptr< Model >& model );
+        void addModel( Model* model, const ModelOrder order );
+        void removeModel( Model* model );
 
-        void addSwApp( std::shared_ptr< PubSub::Module >& app );
-        void removeSwApp( std::shared_ptr< PubSub::Module >& app );
+        void addSwApp( PubSub::Module* app );
+        void removeSwApp( PubSub::Module* app );
 
+        virtual void createEntity() = 0;
         void initialize();
-        void start();
+        void update();
         void stop( bool over_ride = false );
         void finalize();
 
-        void run( const EntityState threadState );
+      protected:
+
+        std::shared_ptr< PubSub::QueueMngr > m_queueMngr;
 
       private:
 
@@ -56,19 +61,23 @@ namespace SimLib
         ModelList m_models;
         AppList   m_apps;
 
-        std::shared_ptr< PubSub::QueueMngr > m_queueMngr;
-
-        std::shared_ptr< Time > m_time;
+        std::shared_ptr< Time > m_worldTime;
 
         unsigned int m_counter;
 
-        const unsigned int m_runRate; 
+        const unsigned int m_runRate;
 
+        void getWorldTime( std::shared_ptr< Time >& worldTime );
+
+        void passReferences();
+        void passQueueMngr();
+
+        void run( const EntityState threadState );
         void runSW();
         void runSim();
 
-        static bool compareModelOrder( const std::pair< std::shared_ptr< Model >, ModelOrder >& lhs,
-                                       const std::pair< std::shared_ptr< Model >, ModelOrder >& rhs );
+        static bool compareModelOrder( const std::pair< Model*, ModelOrder >& lhs,
+                                       const std::pair< Model*, ModelOrder >& rhs );
 
         Entity( const Entity& ) = delete;
         Entity& operator=( const Entity& ) = delete;

@@ -11,6 +11,10 @@ namespace SimLib
     {
     }
 
+    Time::~Time()
+    {
+    }
+
     void Time::incrementTime()
     {
         std::unique_lock<std::mutex> lck( mtx );

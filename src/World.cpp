@@ -1,3 +1,90 @@
 
 
 #include "World.h"
+
+#include <csignal>
+#include <iostream>
+
+void signalHandler( int signum )
+{
+    std::cout << "Interrupt signal (" << signum << ") received.\n";
+
+    // cleanup and close up stuff here
+    // terminate program
+
+    exit( signum );
+}
+
+namespace SimLib
+{
+
+    World::World()
+        : m_time    ( new Time() )
+        , m_entities()
+    {
+        signal( SIGINT, signalHandler );
+        signal( SIGABRT, signalHandler );
+    }
+
+    World::~World()
+    {
+    }
+
+    void World::addEntity( Entity* entity )
+    {
+        m_entities.push_back( entity );
+
+        m_entities.unique();
+    }
+
+    void World::removeEntity( Entity* entity )
+    {
+        m_entities.remove( entity );
+    }
+
+    void World::initialize()
+    {
+        for ( auto& entity : m_entities )
+        {
+            entity->initialize();
+        }
+    }
+
+    void World::go()
+    {
+        createWorld();
+
+        for ( auto& entity : m_entities )
+        {
+            entity->createEntity();
+        }
+
+        initialize();
+
+        for ( int i{0}; i < 100; ++i )
+        {
+            iterate();
+        }
+
+        finalize();
+    }
+
+    void World::iterate()
+    {
+        m_time.get()->incrementTime();
+
+        for ( auto& entity : m_entities )
+        {
+            entity->update();
+        }
+    }
+
+    void World::finalize()
+    {
+        for ( auto& entity : m_entities )
+        {
+            entity->finalize();
+        }
+    }
+
+} // namespace SimLib

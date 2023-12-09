@@ -20,8 +20,6 @@ file(GLOB_RECURSE HEADERS_HXX RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hxx)
 list(APPEND SOURCES ${SOURCES_C} ${SOURCES_CPP} ${SOURCES_CXX})
 list(APPEND HEADERS ${HEADERS_H} ${HEADERS_HPP} ${HEADERS_HXX})
 
-add_link_options(-lpthread)
-
 add_library(${target} SHARED ${SOURCES} ${SOURCES})
 
 target_link_libraries(${target} PUBLIC PubSub)
