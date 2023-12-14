@@ -12,8 +12,7 @@ namespace SimLib
     class Model;
     typedef std::string             ModelLabel;
     typedef double                  ModelRate;
-    typedef std::list< ModelLabel > ReferenceRequestList;
-    typedef std::list< std::pair< ModelLabel, Model* > > ReferenceList;
+    typedef std::list< std::pair< ModelLabel, Model** > > ReferenceRequestList;
 
     class ReferenceRequest
     {
@@ -23,14 +22,14 @@ namespace SimLib
         ReferenceRequest();
         ~ReferenceRequest();
 
-        void requestReference( ModelLabel label );
-        Model* getReference( ModelLabel label );
+        void requestReference( Model** model, ModelLabel label );
 
       private:
-      friend class Entity;
+        friend class Entity;
+
+        void reset();
 
         ReferenceRequestList m_referenceRequests;
-        ReferenceList        m_references;
     };
 
     class Model
@@ -53,14 +52,12 @@ namespace SimLib
       private:
 
         const ModelLabel label;
-        ReferenceRequest m_reference_request;
 
         virtual void initialize() = 0;
         virtual void update()     = 0;
         virtual void finalize()   = 0;
-        virtual void getReferenceRequest( ReferenceRequest& refReq );
-        
-        virtual ReferenceRequest requestReferences() const;
+
+        virtual void requestReferences( ReferenceRequest& refReq );
 
         virtual void receiveQueueMngr( std::shared_ptr< PubSub::QueueMngr >& queueMngr );
 

@@ -152,23 +152,26 @@ namespace SimLib
 
     void Entity::passReferences()
     {
+        ReferenceRequest refReq;
+
         for ( auto& model : m_models )
         {
-            ReferenceRequest refReq = model.first->requestReferences();
+            refReq.reset();
+
+            model.first->requestReferences( refReq );
 
             for ( auto& refReqIdx : refReq.m_referenceRequests )
             {
                 for ( auto& modelIdx : m_models )
                 {
-                    if ( modelIdx.first->getModelLabel() == refReqIdx )
+                    if ( modelIdx.first->getModelLabel() == refReqIdx.first )
                     {
-                        refReq.m_references.push_back( std::pair< ModelLabel, Model* >( refReqIdx, modelIdx.first ) );
+                        *( refReqIdx.second ) = modelIdx.first;
+                        
                         break;
                     }
                 }
             }
-
-            model.first->getReferenceRequest( refReq );
         }
     }
 

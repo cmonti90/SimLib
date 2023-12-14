@@ -5,7 +5,6 @@ namespace SimLib
 {
     ReferenceRequest::ReferenceRequest()
         : m_referenceRequests()
-        , m_references       ()
     {
     }
 
@@ -13,22 +12,14 @@ namespace SimLib
     {
     }
 
-    void ReferenceRequest::requestReference( ModelLabel label )
+    void ReferenceRequest::reset()
     {
-        m_referenceRequests.push_back( label );
+        m_referenceRequests.clear();
     }
 
-    Model* ReferenceRequest::getReference( ModelLabel label )
+    void ReferenceRequest::requestReference( Model** model, ModelLabel label )
     {
-        for ( auto& ref : m_references )
-        {
-            if ( ref.first == label )
-            {
-                return ref.second;
-            }
-        }
-
-        return nullptr;
+        m_referenceRequests.push_back( std::pair< ModelLabel, Model** >( label, model ) );
     }
 
     Model::Model( const ModelRate rate, const ModelLabel str )
@@ -41,18 +32,9 @@ namespace SimLib
     {
     }
 
-    ReferenceRequest Model::requestReferences() const
+    void Model::requestReferences( ReferenceRequest& refReq )
     {
         // Do nothing by default
-        ReferenceRequest request;
-
-        return request;
-    }
-
-    void Model::getReferenceRequest( ReferenceRequest& refReq )
-    {
-        // Do nothing by default
-    
     }
 
     ModelLabel Model::getModelLabel() const
