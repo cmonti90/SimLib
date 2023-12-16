@@ -6,8 +6,10 @@ set(version 1.0.0)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
+list(APPEND CMAKE_PREFIX_PATH $ENV{MATHLIB_DIR})
 list(APPEND CMAKE_PREFIX_PATH $ENV{PUBSUBLIB_DIR})
 
+find_package(mathlib CONFIG REQUIRED)
 find_package(PubSub CONFIG REQUIRED)
 
 file(GLOB_RECURSE SOURCES_C RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cc)
@@ -22,7 +24,7 @@ list(APPEND HEADERS ${HEADERS_H} ${HEADERS_HPP} ${HEADERS_HXX})
 
 add_library(${target} SHARED ${SOURCES} ${SOURCES})
 
-target_link_libraries(${target} PUBLIC PubSub)
+target_link_libraries(${target} PUBLIC mathlib PubSub)
 
 set_property(TARGET ${target} PROPERTY VERSION ${version})
 set_property(TARGET ${target} PROPERTY SOVERSION 1)

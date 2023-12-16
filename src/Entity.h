@@ -2,6 +2,7 @@
 #define GUARD_SIMLIB_ENTITY_H
 
 #include "Model.h"
+#include "ForceEffector.h"
 #include "Time.h"
 
 #include "Module.h"
@@ -13,6 +14,7 @@
 
 namespace SimLib
 {
+    class ForceEffector;
     typedef unsigned int ModelOrder;
     typedef std::list< std::pair< Model*, ModelOrder > > ModelList;
     typedef std::list< PubSub::Module* > AppList;
@@ -52,16 +54,19 @@ namespace SimLib
 
       protected:
 
-        std::shared_ptr< PubSub::QueueMngr > m_queueMngr;
 
       private:
 
-        EntityState m_entityState;
+        std::unique_ptr< ForceEffector > m_forceEffector;
 
         ModelList m_models;
         AppList   m_apps;
 
         std::shared_ptr< Time > m_worldTime;
+
+        std::shared_ptr< PubSub::QueueMngr > m_queueMngr;
+        
+        EntityState m_entityState;
 
         unsigned int m_counter;
 

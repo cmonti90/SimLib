@@ -1,5 +1,6 @@
 
 #include "Entity.h"
+#include "ForceEffector.h"
 
 #include <algorithm>
 
@@ -7,13 +8,15 @@ namespace SimLib
 {
 
     Entity::Entity( const double runRate )
-        : m_models   ()
-        , m_apps     ()
-        , m_queueMngr( new PubSub::QueueMngr() )
-        , m_worldTime( nullptr )
-        , m_counter  ( 0u )
-        , m_runRate  ( runRate )
+        : m_forceEffector( new ForceEffector( runRate ) )
+        , m_models       ()
+        , m_apps         ()
+        , m_worldTime    ( nullptr )
+        , m_queueMngr    ( new PubSub::QueueMngr() )
+        , m_counter      ( 0u )
+        , m_runRate      ( runRate )
     {
+        addModel( m_forceEffector.get(), runRate );
     }
 
     Entity::~Entity()

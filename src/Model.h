@@ -44,22 +44,23 @@ namespace SimLib
         ModelRate  getModelRate() const;
 
       protected:
+      
         friend class World;
         friend class Entity;
-
-        const ModelRate m_rate;
-
-      private:
-
-        const ModelLabel label;
 
         virtual void initialize() = 0;
         virtual void update()     = 0;
         virtual void finalize()   = 0;
 
-        virtual void requestReferences( ReferenceRequest& refReq );
 
+        const ModelRate m_rate;
+
+      private:
+
+        virtual void requestReferences( ReferenceRequest& refReq );
         virtual void receiveQueueMngr( std::shared_ptr< PubSub::QueueMngr >& queueMngr );
+
+        const ModelLabel label;
 
         Model( const Model& ) = delete;
         Model& operator=( const Model& ) = delete;

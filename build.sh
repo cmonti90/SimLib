@@ -5,6 +5,7 @@ buildToDir="build"
 curDir=${PWD}
 oldDir=${OLDPWD}
 
+export MATHLIB_DIR="/home/cmonti/Documents/Coding/Libraries/myMathLib/install/lib64/cmake/mathlib"
 export PUBSUBLIB_DIR="/home/cmonti/Documents/Coding/Libraries/PubSub/install/lib64/cmake/PubSub"
 
 SCRIPT_DIR="$( dirname -- "${BASH_SOURCE[0]}" )"
