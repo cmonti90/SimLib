@@ -19,9 +19,7 @@ namespace SimLib
                                       myMath::Vector3d& angRatesBody, myMath::Vector3d& angAccelBody, const myMath::Matrix3d& rotInertia,
                                       myMath::QuaternionD& q_nedToBody, const myMath::Vector3d& specificForceEcef, const myMath::Vector3d& netMomentBody )
     {
-        const double dt = 1.0 / m_rate;
-
-        myMath::Vector3d gravityEcef ;
+        const double dt = 1.0 / m_rate;;
 
         myMath::Vector3d dPosEcef[4];
         myMath::Vector3d dVelEcef[4];
@@ -30,30 +28,30 @@ namespace SimLib
         myMath::Vector3d dAngBodyRates[4];
 
         // Instantaneous accelerations
-        accelEcef           = AccelerationEcef( posEcef, velEcef, gravityEcef, specificForceEcef );
+        accelEcef           = AccelerationEcef( posEcef, velEcef, specificForceEcef );
         angAccelBody        = angularRatesDerivative( rotInertia, angRatesBody[ROLL], angRatesBody[PITCH], angRatesBody[YAW], netMomentBody );
 
         // k1
-        dVelEcef[0]         = dt * AccelerationEcef( posEcef, velEcef, gravityEcef, specificForceEcef );
+        dVelEcef[0]         = dt * AccelerationEcef( posEcef, velEcef, specificForceEcef );
         dPosEcef[0]         = dt * velEcef;
         dAngBodyRates[0]    = dt * angularRatesDerivative( rotInertia, angRatesBody[ROLL], angRatesBody[PITCH], angRatesBody[YAW], netMomentBody );
         Kq[0]               = QuaterionRKrotationMatrix( 1.0 / 6.0, angRatesBody );
 
 
         // k2
-        dVelEcef[1]         = dt * AccelerationEcef( posEcef + dPosEcef[0] / 2.0, velEcef + dVelEcef[0] / 2.0, gravityEcef, specificForceEcef );
+        dVelEcef[1]         = dt * AccelerationEcef( posEcef + dPosEcef[0] / 2.0, velEcef + dVelEcef[0] / 2.0, specificForceEcef );
         dPosEcef[1]         = dt * ( velEcef + dVelEcef[0] / 2.0 );
         dAngBodyRates[1]    = dt * angularRatesDerivative( rotInertia, angRatesBody[ROLL] + dAngBodyRates[0][ROLL] / 2.0, angRatesBody[PITCH] + dAngBodyRates[0][PITCH] / 2.0, angRatesBody[YAW] + dAngBodyRates[0][YAW] / 2.0, netMomentBody );
         Kq[1]               = QuaterionRKrotationMatrix( 1.0 / 3.0, angRatesBody + dAngBodyRates[0] / 2.0 );
 
         // k3
-        dVelEcef[2]         = dt * AccelerationEcef( posEcef + dPosEcef[1] / 2.0, velEcef + dVelEcef[1] / 2.0, gravityEcef, specificForceEcef );
+        dVelEcef[2]         = dt * AccelerationEcef( posEcef + dPosEcef[1] / 2.0, velEcef + dVelEcef[1] / 2.0, specificForceEcef );
         dPosEcef[2]         = dt * ( velEcef + dVelEcef[1] / 2.0 );
         dAngBodyRates[2]    = dt * angularRatesDerivative( rotInertia, angRatesBody[ROLL] + dAngBodyRates[1][ROLL] / 2.0, angRatesBody[PITCH] + dAngBodyRates[1][PITCH] / 2.0, angRatesBody[YAW] + dAngBodyRates[1][YAW] / 2.0, netMomentBody );
         Kq[2]               = QuaterionRKrotationMatrix( 1.0 / 3.0, angRatesBody + dAngBodyRates[1] / 2.0 );
 
         // k4
-        dVelEcef[3]         = dt * AccelerationEcef( posEcef + dPosEcef[2], velEcef + dVelEcef[2], gravityEcef, specificForceEcef );
+        dVelEcef[3]         = dt * AccelerationEcef( posEcef + dPosEcef[2], velEcef + dVelEcef[2], specificForceEcef );
         dPosEcef[3]         = dt * ( velEcef + dVelEcef[2] );
         dAngBodyRates[3]    = dt * angularRatesDerivative( rotInertia, angRatesBody[ROLL] + dAngBodyRates[2][ROLL], angRatesBody[PITCH] + dAngBodyRates[2][PITCH], angRatesBody[YAW] + dAngBodyRates[2][YAW], netMomentBody );
         Kq[3]               = QuaterionRKrotationMatrix( 1.0 / 6.0, angRatesBody + dAngBodyRates[2] );
@@ -69,11 +67,30 @@ namespace SimLib
 
     }
 
-    myMath::Vector3d EOMEcef::AccelerationEcef( const myMath::Vector3d& posEcef, const myMath::Vector3d& velEcef, const myMath::Vector3d& gravityEcef, const myMath::Vector3d& specificForceEcef )
+    myMath::Vector3d EOMEcef::ComputeGravityJ2( const myMath::Vector3d& posEcef )
+    {
+        myMath::Vector3d gravityEcef;
+
+        const double r5inv = 1.0 / std::pow( posEcef.Magnitude(), 5.0 );
+        const double r7inv = r5inv / myMath::SQ( posEcef.Magnitude() );
+
+        const double xyCoef = myMath::Constants::EARTH_MU * ( 1.0 +
+                              myMath::Constants::EARTH_J2 * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) * ( 1.5 * r5inv - 7.5 * myMath::SQ( posEcef[Z] ) * r7inv ) );
+
+        gravityEcef[X] = -posEcef[X] * xyCoef;
+        gravityEcef[Y] = -posEcef[Y] * xyCoef;
+
+        gravityEcef[Z] = -posEcef[Z] * myMath::Constants::EARTH_MU * ( 1.0 +
+                         myMath::Constants::EARTH_J2 * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) * ( 4.5 * r5inv - 7.5 * myMath::SQ( posEcef[Z] ) * r7inv ) );
+
+        return gravityEcef;
+    }
+
+    myMath::Vector3d EOMEcef::AccelerationEcef( const myMath::Vector3d& posEcef, const myMath::Vector3d& velEcef, const myMath::Vector3d& specificForceEcef )
     {
         const myMath::Vector3d omegaEcef{ 0.0, 0.0, myMath::Constants::EARTH_ROTATION_RATE };
 
-        return specificForceEcef - 2.0 * myMath::CrossProduct( omegaEcef, velEcef ) - myMath::CrossProduct( omegaEcef, myMath::CrossProduct( omegaEcef, posEcef ) ) + gravityEcef;
+        return specificForceEcef - 2.0 * myMath::CrossProduct( omegaEcef, velEcef ) - myMath::CrossProduct( omegaEcef, myMath::CrossProduct( omegaEcef, posEcef ) ) + ComputeGravityJ2( posEcef );
     }
 
 
