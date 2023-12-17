@@ -44,16 +44,6 @@ namespace SimLib
         m_entities.remove( entity );
     }
 
-    void World::initialize()
-    {
-        std::cout << "World::initialize" << std::endl;
-
-        for ( auto& entity : m_entities )
-        {
-            entity->initialize();
-        }
-    }
-
     void World::go()
     {
         std::cout << "World::go" << std::endl;
@@ -75,13 +65,19 @@ namespace SimLib
         finalize();
     }
 
+    void World::initialize()
+    {
+        std::cout << "World::initialize" << std::endl;
+
+        for ( auto& entity : m_entities )
+        {
+            entity->initialize();
+        }
+    }
+
     void World::iterate()
     {
-        std::cout << "World::iterate : incrementTime" << std::endl;
-        
         m_time.get()->incrementTime();
-
-        std::cout << "World::iterate" << std::endl;
         
         for ( auto& entity : m_entities )
         {

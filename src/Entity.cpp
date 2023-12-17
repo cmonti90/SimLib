@@ -159,6 +159,7 @@ namespace SimLib
 
         for ( auto& model : m_models )
         {
+
             refReq.reset();
 
             model.first->requestReferences( refReq );

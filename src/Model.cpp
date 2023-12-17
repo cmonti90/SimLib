@@ -1,5 +1,6 @@
 
 #include "Model.h"
+#include <iostream>
 
 namespace SimLib
 {
@@ -24,7 +25,7 @@ namespace SimLib
 
     Model::Model( const ModelRate rate, const ModelLabel str )
         : m_rate        ( rate )
-        , label         ( str )
+        , m_label       ( str )
     {
     }
 
@@ -39,7 +40,7 @@ namespace SimLib
 
     ModelLabel Model::getModelLabel() const
     {
-        return label;
+        return m_label;
     }
 
     ModelRate  Model::getModelRate() const

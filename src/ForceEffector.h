@@ -13,6 +13,7 @@ namespace SimLib
     class ForceEffector : public Model
     {
       public:
+        friend class Entity;
 
         enum class ForceEffectorType : unsigned int
         {
@@ -37,6 +38,7 @@ namespace SimLib
         virtual void initialize() override;
         virtual void update()     override;
         virtual void finalize()   override;
+        virtual void requestReferences( ReferenceRequest& refReq ) override;
 
       private:
         typedef std::unordered_map< const Model*, myMath::Vector3d > ForceMap;

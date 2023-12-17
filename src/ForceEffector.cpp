@@ -17,6 +17,10 @@ namespace SimLib
     {
     }
 
+    void ForceEffector::requestReferences( ReferenceRequest& refReq )
+    {
+    }
+
     void ForceEffector::initialize()
     {
     }

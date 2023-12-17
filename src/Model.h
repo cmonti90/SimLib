@@ -59,7 +59,7 @@ namespace SimLib
 
         virtual void receiveQueueMngr( std::shared_ptr< PubSub::QueueMngr >& queueMngr );
 
-        const ModelLabel label;
+        const ModelLabel m_label;
 
         Model( const Model& ) = delete;
         Model& operator=( const Model& ) = delete;

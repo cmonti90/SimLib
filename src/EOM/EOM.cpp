@@ -5,6 +5,7 @@ namespace SimLib
 {
     EOM::EOM( const ModelRate rate, const ModelLabel str )
         : Model( rate, str )
+        , m_forceEffector( nullptr )
     {
     }
 
