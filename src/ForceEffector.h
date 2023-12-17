@@ -24,12 +24,15 @@ namespace SimLib
         explicit ForceEffector( const ModelRate rate, const ModelLabel str = "ForceEffector" );
         virtual ~ForceEffector();
 
+        // Getters
+        myMath::Vector3d getForce();
+        myMath::Vector3d getMoment();
+
         // Setters
         void addForce( const Model* model, const myMath::Vector3d force, const ForceEffectorType type = ForceEffectorType::ZERO_ORDER_HOLD );
         void addMoment( const Model* model, const myMath::Vector3d moment, const ForceEffectorType type = ForceEffectorType::ZERO_ORDER_HOLD );
 
       protected:
-        friend class EOM;
 
         virtual void initialize() override;
         virtual void update()     override;
@@ -37,9 +40,6 @@ namespace SimLib
 
       private:
         typedef std::unordered_map< const Model*, myMath::Vector3d > ForceMap;
-
-        myMath::Vector3d getForce();
-        myMath::Vector3d getMoment();
 
         ForceMap m_sustainedForceMap;
         ForceMap m_singleForceMap;
