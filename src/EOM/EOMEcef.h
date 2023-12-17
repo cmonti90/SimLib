@@ -17,7 +17,7 @@ namespace SimLib
 
         void RungeKutta4thOrder( myMath::Vector3d& posEcef, myMath::Vector3d& velEcef, myMath::Vector3d& accelEcef,
                                  myMath::Vector3d& angRatesBody, myMath::Vector3d& angAccelBody, const myMath::Matrix3d& rotInertia,
-                                 myMath::QuaternionD& q_bodyFromEcef, const myMath::Vector3d& gravityEcef,
+                                 myMath::QuaternionD& q_ecefToBody, const myMath::Vector3d& gravityEcef,
                                  const myMath::Vector3d& specificForceEcef, const myMath::Vector3d& netMomentBody );
 
       private:

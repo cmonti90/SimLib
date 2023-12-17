@@ -17,7 +17,7 @@ namespace SimLib
 
     void EOMEcef::RungeKutta4thOrder( myMath::Vector3d& posEcef, myMath::Vector3d& velEcef, myMath::Vector3d& accelEcef,
                                       myMath::Vector3d& angRatesBody, myMath::Vector3d& angAccelBody, const myMath::Matrix3d& rotInertia,
-                                      myMath::QuaternionD& q_bodyFromEcef, const myMath::Vector3d& gravityEcef,
+                                      myMath::QuaternionD& q_ecefToBody, const myMath::Vector3d& gravityEcef,
                                       const myMath::Vector3d& specificForceEcef, const myMath::Vector3d& netMomentBody )
     {
         const double dt = 1.0 / m_rate;
@@ -27,7 +27,6 @@ namespace SimLib
 
         myMath::Matrix4d Kq[4];
         myMath::Vector3d dAngBodyRates[4];
-        myMath::Vector3d dAngBodyRatesDot;
 
         // Instantaneous accelerations
         accelEcef           = AccelerationEcef( posEcef, velEcef, gravityEcef, specificForceEcef );
@@ -43,7 +42,7 @@ namespace SimLib
         // k2
         dVelEcef[1]         = dt * AccelerationEcef( posEcef + dPosEcef[0] / 2.0, velEcef + dVelEcef[0] / 2.0, gravityEcef, specificForceEcef );
         dPosEcef[1]         = dt * ( velEcef + dVelEcef[0] / 2.0 );
-        dAngBodyRatesDot    = dt * angularRatesDerivative( rotInertia, angRatesBody[ROLL] + dAngBodyRates[0][ROLL] / 2.0, angRatesBody[PITCH] + dAngBodyRates[0][PITCH] / 2.0, angRatesBody[YAW] + dAngBodyRates[0][YAW] / 2.0, netMomentBody );
+        dAngBodyRates[1]    = dt * angularRatesDerivative( rotInertia, angRatesBody[ROLL] + dAngBodyRates[0][ROLL] / 2.0, angRatesBody[PITCH] + dAngBodyRates[0][PITCH] / 2.0, angRatesBody[YAW] + dAngBodyRates[0][YAW] / 2.0, netMomentBody );
         Kq[1]               = QuaterionRKrotationMatrix( 1.0 / 3.0, angRatesBody + dAngBodyRates[0] / 2.0 );
 
         // k3
@@ -64,8 +63,8 @@ namespace SimLib
         posEcef         += ( dPosEcef[0]      + 2.0 * ( dPosEcef[1]      + dPosEcef[2]      ) + dPosEcef[3]      ) / 6.0;
         angRatesBody    += ( dAngBodyRates[0] + 2.0 * ( dAngBodyRates[1] + dAngBodyRates[2] ) + dAngBodyRates[3] ) / 6.0;
 
-        q_bodyFromEcef  = Kq[3] * Kq[2] * Kq[1] * Kq[0] * q_bodyFromEcef;
-        q_bodyFromEcef.Normalize();
+        q_ecefToBody  = Kq[3] * Kq[2] * Kq[1] * Kq[0] * q_ecefToBody;
+        q_ecefToBody.Normalize();
 
     }
 
