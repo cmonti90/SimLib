@@ -32,6 +32,8 @@ namespace SimLib
 
     void World::addEntity( Entity* entity )
     {
+        std::cout << "World::addEntity" << std::endl;
+
         m_entities.push_back( entity );
 
         m_entities.unique();
@@ -44,6 +46,8 @@ namespace SimLib
 
     void World::initialize()
     {
+        std::cout << "World::initialize" << std::endl;
+
         for ( auto& entity : m_entities )
         {
             entity->initialize();
@@ -52,6 +56,8 @@ namespace SimLib
 
     void World::go()
     {
+        std::cout << "World::go" << std::endl;
+        
         createWorld();
 
         for ( auto& entity : m_entities )
@@ -71,8 +77,12 @@ namespace SimLib
 
     void World::iterate()
     {
+        std::cout << "World::iterate : incrementTime" << std::endl;
+        
         m_time.get()->incrementTime();
 
+        std::cout << "World::iterate" << std::endl;
+        
         for ( auto& entity : m_entities )
         {
             entity->update();

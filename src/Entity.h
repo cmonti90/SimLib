@@ -54,6 +54,8 @@ namespace SimLib
 
       protected:
 
+        std::shared_ptr< PubSub::QueueMngr > m_queueMngr;
+
 
       private:
 
@@ -64,8 +66,6 @@ namespace SimLib
 
         std::shared_ptr< Time > m_worldTime;
 
-        std::shared_ptr< PubSub::QueueMngr > m_queueMngr;
-        
         EntityState m_entityState;
 
         unsigned int m_counter;
