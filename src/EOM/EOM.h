@@ -29,11 +29,12 @@ namespace SimLib
             YAW
         };
 
+        virtual void requestReferences( ReferenceRequest& refReq ) override;
+
         ForceEffector* m_forceEffector;
 
       private:
-
-        virtual void requestReferences( ReferenceRequest& refReq ) override;
+      
     };
 
 } // namespace SimLib

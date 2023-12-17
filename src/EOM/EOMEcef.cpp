@@ -17,10 +17,11 @@ namespace SimLib
 
     void EOMEcef::RungeKutta4thOrder( myMath::Vector3d& posEcef, myMath::Vector3d& velEcef, myMath::Vector3d& accelEcef,
                                       myMath::Vector3d& angRatesBody, myMath::Vector3d& angAccelBody, const myMath::Matrix3d& rotInertia,
-                                      myMath::QuaternionD& q_ecefToBody, const myMath::Vector3d& gravityEcef,
-                                      const myMath::Vector3d& specificForceEcef, const myMath::Vector3d& netMomentBody )
+                                      myMath::QuaternionD& q_nedToBody, const myMath::Vector3d& specificForceEcef, const myMath::Vector3d& netMomentBody )
     {
         const double dt = 1.0 / m_rate;
+
+        myMath::Vector3d gravityEcef ;
 
         myMath::Vector3d dPosEcef[4];
         myMath::Vector3d dVelEcef[4];
@@ -63,8 +64,8 @@ namespace SimLib
         posEcef         += ( dPosEcef[0]      + 2.0 * ( dPosEcef[1]      + dPosEcef[2]      ) + dPosEcef[3]      ) / 6.0;
         angRatesBody    += ( dAngBodyRates[0] + 2.0 * ( dAngBodyRates[1] + dAngBodyRates[2] ) + dAngBodyRates[3] ) / 6.0;
 
-        q_ecefToBody  = Kq[3] * Kq[2] * Kq[1] * Kq[0] * q_ecefToBody;
-        q_ecefToBody.Normalize();
+        q_nedToBody  = Kq[3] * Kq[2] * Kq[1] * Kq[0] * q_nedToBody;
+        q_nedToBody.Normalize();
 
     }
 
