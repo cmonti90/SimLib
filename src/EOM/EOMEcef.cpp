@@ -44,19 +44,19 @@ namespace SimLib
         dVelEcef[1]         = dt * AccelerationEcef( posEcef + dPosEcef[0] / 2.0, velEcef + dVelEcef[0] / 2.0, gravityEcef, specificForceEcef );
         dPosEcef[1]         = dt * ( velEcef + dVelEcef[0] / 2.0 );
         dAngBodyRatesDot    = dt * angularRatesDerivative( rotInertia, angRatesBody[ROLL] + dAngBodyRates[0][ROLL] / 2.0, angRatesBody[PITCH] + dAngBodyRates[0][PITCH] / 2.0, angRatesBody[YAW] + dAngBodyRates[0][YAW] / 2.0, netMomentBody );
-        Kq[1]               = QuaterionRKrotationMatrix( 1.0 / 3.0, angRatesBody );
+        Kq[1]               = QuaterionRKrotationMatrix( 1.0 / 3.0, angRatesBody + dAngBodyRates[0] / 2.0 );
 
         // k3
         dVelEcef[2]         = dt * AccelerationEcef( posEcef + dPosEcef[1] / 2.0, velEcef + dVelEcef[1] / 2.0, gravityEcef, specificForceEcef );
         dPosEcef[2]         = dt * ( velEcef + dVelEcef[1] / 2.0 );
         dAngBodyRates[2]    = dt * angularRatesDerivative( rotInertia, angRatesBody[ROLL] + dAngBodyRates[1][ROLL] / 2.0, angRatesBody[PITCH] + dAngBodyRates[1][PITCH] / 2.0, angRatesBody[YAW] + dAngBodyRates[1][YAW] / 2.0, netMomentBody );
-        Kq[2]               = QuaterionRKrotationMatrix( 1.0 / 3.0, angRatesBody );
+        Kq[2]               = QuaterionRKrotationMatrix( 1.0 / 3.0, angRatesBody + dAngBodyRates[1] / 2.0 );
 
         // k4
         dVelEcef[3]         = dt * AccelerationEcef( posEcef + dPosEcef[2], velEcef + dVelEcef[2], gravityEcef, specificForceEcef );
         dPosEcef[3]         = dt * ( velEcef + dVelEcef[2] );
         dAngBodyRates[3]    = dt * angularRatesDerivative( rotInertia, angRatesBody[ROLL] + dAngBodyRates[2][ROLL], angRatesBody[PITCH] + dAngBodyRates[2][PITCH], angRatesBody[YAW] + dAngBodyRates[2][YAW], netMomentBody );
-        Kq[3]               = QuaterionRKrotationMatrix( 1.0 / 6.0, angRatesBody );
+        Kq[3]               = QuaterionRKrotationMatrix( 1.0 / 6.0, angRatesBody + dAngBodyRates[2] );
 
 
         // Update state
@@ -73,7 +73,7 @@ namespace SimLib
     {
         const myMath::Vector3d omegaEcef{ 0.0, 0.0, myMath::Constants::EARTH_ROTATION_RATE };
 
-        return specificForceEcef - 2.0 * myMath::Cross( omegaEcef, velEcef ) - myMath::Cross( omegaEcef, myMath::Cross( omegaEcef, posEcef ) ) + gravityEcef;
+        return specificForceEcef - 2.0 * myMath::CrossProduct( omegaEcef, velEcef ) - myMath::CrossProduct( omegaEcef, myMath::CrossProduct( omegaEcef, posEcef ) ) + gravityEcef;
     }
 
 
