@@ -3,7 +3,7 @@
 
 #include "Model.h"
 #include "ForceEffector.h"
-#include "Time.h"
+#include "SimTime.h"
 
 #include "Module.h"
 #include "QueueMngr.h"
@@ -64,7 +64,7 @@ namespace SimLib
         ModelList m_models;
         AppList   m_apps;
 
-        std::shared_ptr< Time > m_worldTime;
+        SimTime* m_worldTime;
 
         EntityState m_entityState;
 
@@ -72,7 +72,7 @@ namespace SimLib
 
         const unsigned int m_runRate;
 
-        void getWorldTime( std::shared_ptr< Time >& worldTime );
+        void getWorldTime( SimTime* worldTime );
 
         void passReferences();
         void passQueueMngr();

@@ -4,6 +4,8 @@
 
 #include "Constants.h"
 
+#include <iostream>
+
 namespace SimLib
 {
     EOMEcef::EOMEcef( const ModelRate rate, const ModelLabel str )
@@ -17,9 +19,11 @@ namespace SimLib
 
     void EOMEcef::RungeKutta4thOrder( myMath::Vector3d& posEcef, myMath::Vector3d& velEcef, myMath::Vector3d& accelEcef,
                                       myMath::Vector3d& angRatesBody, myMath::Vector3d& angAccelBody, const myMath::Matrix3d& rotInertia,
-                                      myMath::QuaternionD& q_nedToBody, const myMath::Vector3d& specificForceEcef, const myMath::Vector3d& netMomentBody )
+                                      myMath::QuaternionD& q_nedToBody, myMath::Vector3d& specificForceEcef, const myMath::Vector3d& netMomentBody )
     {
         const double dt = 1.0 / m_rate;;
+
+        myMath::Vector3d gravity = ComputeGravityJ2( posEcef );
 
         myMath::Vector3d dPosEcef[4];
         myMath::Vector3d dVelEcef[4];
@@ -65,23 +69,29 @@ namespace SimLib
         q_nedToBody  = Kq[3] * Kq[2] * Kq[1] * Kq[0] * q_nedToBody;
         q_nedToBody.Normalize();
 
+        specificForceEcef += gravity;
+
     }
 
     myMath::Vector3d EOMEcef::ComputeGravityJ2( const myMath::Vector3d& posEcef )
     {
         myMath::Vector3d gravityEcef;
 
-        const double r5inv = 1.0 / std::pow( posEcef.Magnitude(), 5.0 );
-        const double r7inv = r5inv / myMath::SQ( posEcef.Magnitude() );
+        const double r = posEcef.Magnitude();
 
-        const double xyCoef = myMath::Constants::EARTH_MU * ( 1.0 +
-                              myMath::Constants::EARTH_J2 * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) * ( 1.5 * r5inv - 7.5 * myMath::SQ( posEcef[Z] ) * r7inv ) );
+        const double r2inv = 1.0 / myMath::SQ( r );
 
-        gravityEcef[X] = -posEcef[X] * xyCoef;
-        gravityEcef[Y] = -posEcef[Y] * xyCoef;
+        const double xyCoef = -( myMath::Constants::EARTH_MU * r2inv / posEcef.Magnitude() ) *
+                              ( ( 1.0 - 1.5 * myMath::Constants::EARTH_J2 * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) * ( r2inv / posEcef.Magnitude() ) )
+                              + ( 1.0 - 5.0 * myMath::SQ( posEcef[Z] * r2inv ) ) );
 
-        gravityEcef[Z] = -posEcef[Z] * myMath::Constants::EARTH_MU * ( 1.0 +
-                         myMath::Constants::EARTH_J2 * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) * ( 4.5 * r5inv - 7.5 * myMath::SQ( posEcef[Z] ) * r7inv ) );
+        gravityEcef[X] = posEcef[X] * xyCoef;
+        gravityEcef[Y] = posEcef[Y] * xyCoef;
+
+        gravityEcef[Z] = -( posEcef[Z] * myMath::Constants::EARTH_MU * r2inv / r ) * ( 1.0 +
+                         1.5 * myMath::Constants::EARTH_J2 * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) * r2inv * ( 3.0 - 5.0 * myMath::SQ( posEcef[Z] ) * r2inv ) );
+
+
 
         return gravityEcef;
     }

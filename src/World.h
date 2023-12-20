@@ -2,7 +2,7 @@
 #define GUARD_WORLD_H
 
 #include "Entity.h"
-#include "Time.h"
+#include "SimTime.h"
 
 #include <memory>
 #include <list>
@@ -28,7 +28,7 @@ namespace SimLib
       private:
         typedef std::list< Entity* > EntityList;
 
-        std::shared_ptr< Time > m_time;
+        SimTime* m_time;
 
         EntityList m_entities;
 

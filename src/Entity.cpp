@@ -78,7 +78,7 @@ namespace SimLib
         run( EntityState::FINALIZE );
     }
 
-    void Entity::getWorldTime( std::shared_ptr< Time >& worldTime )
+    void Entity::getWorldTime( SimTime* worldTime )
     {
         m_worldTime = worldTime;
     }

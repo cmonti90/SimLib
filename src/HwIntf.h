@@ -20,13 +20,16 @@ namespace SimLib
         std::shared_ptr< PubSub::QueueMngr >& getQueueMngr();
 
       protected:
+      
 
       private:
+
         virtual void receiveQueueMngr( std::shared_ptr< PubSub::QueueMngr >& queueMngr ) override;
 
         std::shared_ptr< PubSub::QueueMngr > m_queueMngr;
 
-
+        HwIntf( const HwIntf& ) = delete;
+        HwIntf& operator=( const HwIntf& ) = delete;
     };
 } // namespace SimLib
 

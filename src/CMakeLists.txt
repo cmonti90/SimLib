@@ -8,9 +8,16 @@ include(CMakePackageConfigHelpers)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{MATHLIB_DIR})
 list(APPEND CMAKE_PREFIX_PATH $ENV{PUBSUBLIB_DIR})
+list(APPEND CMAKE_PREFIX_PATH $ENV{HDF5LIB_DIR})
+
+set (LIB_TYPE SHARED) # STATIC/SHARED
+string(TOLOWER ${LIB_TYPE} SEARCH_TYPE)
 
 find_package(mathlib CONFIG REQUIRED)
 find_package(PubSub CONFIG REQUIRED)
+find_package (HDF5 NAMES hdf5 COMPONENTS ${SEARCH_TYPE})
+set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIR}")
+set (LINK_HDF5_LIBS ${HDF5_C_${LIB_TYPE}_LIBRARY})
 
 file(GLOB_RECURSE SOURCES_C RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cc)
 file(GLOB_RECURSE SOURCES_CPP RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
@@ -22,9 +29,12 @@ file(GLOB_RECURSE HEADERS_HXX RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hxx)
 list(APPEND SOURCES ${SOURCES_C} ${SOURCES_CPP} ${SOURCES_CXX})
 list(APPEND HEADERS ${HEADERS_H} ${HEADERS_HPP} ${HEADERS_HXX})
 
-add_library(${target} SHARED ${SOURCES} ${SOURCES})
+add_library(${target} SHARED ${SOURCES} )
 
-target_link_libraries(${target} PUBLIC mathlib PubSub)
+target_link_libraries(${target} PUBLIC mathlib
+                                       PubSub
+                                       ${LINK_HDF5_LIBS}
+                                       )
 
 set_property(TARGET ${target} PROPERTY VERSION ${version})
 set_property(TARGET ${target} PROPERTY SOVERSION 1)
@@ -44,12 +54,15 @@ macro(includeSubDirs targ curdir instdir installDirs)
 
   foreach(child ${children})
     if(IS_DIRECTORY ${curdir}/${child})
+    
       includeSubDirs(${targ} ${curdir}/${child} ${instdir}/${child} ${sourceDirs} ${installDirs})
+
     endif()
   endforeach()
 endmacro()
 
 includeSubDirs(${target} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_INSTALL_INCLUDEDIR} install_dirs)
+
 
 install(TARGETS ${target}
         EXPORT ${exportedTarget}

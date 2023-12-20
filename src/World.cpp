@@ -19,7 +19,7 @@ namespace SimLib
 {
 
     World::World()
-        : m_time    ( new Time() )
+        : m_time    ( SimTime::GetInstance() )
         , m_entities()
     {
         signal( SIGINT, signalHandler );
@@ -32,8 +32,6 @@ namespace SimLib
 
     void World::addEntity( Entity* entity )
     {
-        std::cout << "World::addEntity" << std::endl;
-
         m_entities.push_back( entity );
 
         m_entities.unique();
@@ -46,8 +44,6 @@ namespace SimLib
 
     void World::go()
     {
-        std::cout << "World::go" << std::endl;
-        
         createWorld();
 
         for ( auto& entity : m_entities )
@@ -77,8 +73,8 @@ namespace SimLib
 
     void World::iterate()
     {
-        m_time.get()->incrementTime();
-        
+        m_time->incrementTime();
+
         for ( auto& entity : m_entities )
         {
             entity->update();
@@ -87,6 +83,8 @@ namespace SimLib
 
     void World::finalize()
     {
+        std::cout << "World::finalize" << std::endl;
+
         for ( auto& entity : m_entities )
         {
             entity->finalize();
