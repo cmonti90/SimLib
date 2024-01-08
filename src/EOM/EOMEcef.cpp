@@ -75,23 +75,31 @@ namespace SimLib
 
     myMath::Vector3d EOMEcef::ComputeGravityJ2( const myMath::Vector3d& posEcef )
     {
-        myMath::Vector3d gravityEcef;
+        const myMath::Vector3d sphericalGravity = -myMath::Constants::EARTH_MU * posEcef.Unit() / myMath::SQ( posEcef.Magnitude() );
 
-        const double r = posEcef.Magnitude();
+        myMath::Vector3d J2Gravity;
 
-        const double r2inv = 1.0 / myMath::SQ( r );
+        const double J2Coeff = -myMath::Constants::EARTH_J2 * myMath::Constants::EARTH_MU * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) / std::pow( posEcef.Magnitude(), 7 );
 
-        const double xyCoef = -( myMath::Constants::EARTH_MU * r2inv / posEcef.Magnitude() ) *
-                              ( ( 1.0 - 1.5 * myMath::Constants::EARTH_J2 * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) * ( r2inv / posEcef.Magnitude() ) )
-                              + ( 1.0 - 5.0 * myMath::SQ( posEcef[Z] * r2inv ) ) );
+        // std::cout << std::endl;
+        // std::cout << "sphericalGravity[X] = " << sphericalGravity[X] << std::endl;
+        // std::cout << "sphericalGravity[Y] = " << sphericalGravity[Y] << std::endl;
+        // std::cout << "sphericalGravity[Z] = " << sphericalGravity[Z] << std::endl;
 
-        gravityEcef[X] = posEcef[X] * xyCoef;
-        gravityEcef[Y] = posEcef[Y] * xyCoef;
+        // std::cout << "Nondimensionaless J2 = " << -myMath::Constants::EARTH_J2 * myMath::Constants::EARTH_MU * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) << std::endl;
+        // std::cout << "J2Coeff = " << J2Coeff << std::endl;
 
-        gravityEcef[Z] = -( posEcef[Z] * myMath::Constants::EARTH_MU * r2inv / r ) * ( 1.0 +
-                         1.5 * myMath::Constants::EARTH_J2 * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) * r2inv * ( 3.0 - 5.0 * myMath::SQ( posEcef[Z] ) * r2inv ) );
+        J2Gravity[X] = J2Coeff * posEcef[X] * ( 6.0 * myMath::SQ( posEcef[Z] ) - 1.5 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
+        J2Gravity[Y] = J2Coeff * posEcef[Y] * ( 6.0 * myMath::SQ( posEcef[Z] ) - 1.5 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
+        J2Gravity[Z] = J2Coeff * posEcef[Z] * ( 3.0 * myMath::SQ( posEcef[Z] ) - 4.5 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
+
+        // std::cout << "J2Gravity[X] = " << J2Gravity[X] << std::endl;
+        // std::cout << "J2Gravity[Y] = " << J2Gravity[Y] << std::endl;
+        // std::cout << "J2Gravity[Z] = " << J2Gravity[Z] << std::endl;
+        // std::cout << std::endl;
 
 
+        const myMath::Vector3d gravityEcef = sphericalGravity + J2Gravity;
 
         return gravityEcef;
     }
