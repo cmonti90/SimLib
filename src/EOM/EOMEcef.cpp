@@ -21,9 +21,9 @@ namespace SimLib
                                       myMath::Vector3d& angRatesBody, myMath::Vector3d& angAccelBody, const myMath::Matrix3d& rotInertia,
                                       myMath::QuaternionD& q_nedToBody, myMath::Vector3d& specificForceEcef, const myMath::Vector3d& netMomentBody )
     {
-        const double dt = 1.0 / m_rate;;
+        const double dt = 1.0 / m_rate;
 
-        myMath::Vector3d gravity = ComputeGravityJ2( posEcef );
+        const myMath::Vector3d gravity = ComputeGravityJ2( posEcef );
 
         myMath::Vector3d dPosEcef[4];
         myMath::Vector3d dVelEcef[4];
@@ -81,23 +81,9 @@ namespace SimLib
 
         const double J2Coeff = -myMath::Constants::EARTH_J2 * myMath::Constants::EARTH_MU * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) / std::pow( posEcef.Magnitude(), 7 );
 
-        // std::cout << std::endl;
-        // std::cout << "sphericalGravity[X] = " << sphericalGravity[X] << std::endl;
-        // std::cout << "sphericalGravity[Y] = " << sphericalGravity[Y] << std::endl;
-        // std::cout << "sphericalGravity[Z] = " << sphericalGravity[Z] << std::endl;
-
-        // std::cout << "Nondimensionaless J2 = " << -myMath::Constants::EARTH_J2 * myMath::Constants::EARTH_MU * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) << std::endl;
-        // std::cout << "J2Coeff = " << J2Coeff << std::endl;
-
         J2Gravity[X] = J2Coeff * posEcef[X] * ( 6.0 * myMath::SQ( posEcef[Z] ) - 1.5 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
         J2Gravity[Y] = J2Coeff * posEcef[Y] * ( 6.0 * myMath::SQ( posEcef[Z] ) - 1.5 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
         J2Gravity[Z] = J2Coeff * posEcef[Z] * ( 3.0 * myMath::SQ( posEcef[Z] ) - 4.5 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
-
-        // std::cout << "J2Gravity[X] = " << J2Gravity[X] << std::endl;
-        // std::cout << "J2Gravity[Y] = " << J2Gravity[Y] << std::endl;
-        // std::cout << "J2Gravity[Z] = " << J2Gravity[Z] << std::endl;
-        // std::cout << std::endl;
-
 
         const myMath::Vector3d gravityEcef = sphericalGravity + J2Gravity;
 
@@ -107,7 +93,7 @@ namespace SimLib
     myMath::Vector3d EOMEcef::AccelerationEcef( const myMath::Vector3d& posEcef, const myMath::Vector3d& velEcef, const myMath::Vector3d& specificForceEcef )
     {
         const myMath::Vector3d omegaEcef{ 0.0, 0.0, myMath::Constants::EARTH_ROTATION_RATE };
-
+        
         return specificForceEcef - 2.0 * myMath::CrossProduct( omegaEcef, velEcef ) - myMath::CrossProduct( omegaEcef, myMath::CrossProduct( omegaEcef, posEcef ) ) + ComputeGravityJ2( posEcef );
     }
 
