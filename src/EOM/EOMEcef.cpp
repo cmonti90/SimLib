@@ -79,7 +79,7 @@ namespace SimLib
 
         myMath::Vector3d J2Gravity;
 
-        const double J2Coeff = -myMath::Constants::EARTH_J2 * myMath::Constants::EARTH_MU * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) / std::pow( posEcef.Magnitude(), 7 );
+        const double J2Coeff = -myMath::Constants::EARTH_J2 * myMath::Constants::EARTH_MU * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) / std::pow( posEcef.Magnitude(), 7u );
 
         J2Gravity[X] = J2Coeff * posEcef[X] * ( 6.0 * myMath::SQ( posEcef[Z] ) - 1.5 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
         J2Gravity[Y] = J2Coeff * posEcef[Y] * ( 6.0 * myMath::SQ( posEcef[Z] ) - 1.5 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
