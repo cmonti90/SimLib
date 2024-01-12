@@ -12,7 +12,7 @@ namespace SimLib
     class World
     {
       public:
-        World();
+        World( const unsigned int runRate = 1000u );
         virtual ~World();
 
         void addEntity( Entity* entity );

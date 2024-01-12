@@ -4,8 +4,6 @@
 
 #include "Constants.h"
 
-#include <iostream>
-
 namespace SimLib
 {
     EOMEcef::EOMEcef( const ModelRate rate, const ModelLabel str )
@@ -41,6 +39,7 @@ namespace SimLib
         dAngBodyRates[0]    = dt * angularRatesDerivative( rotInertia, angRatesBody[ROLL], angRatesBody[PITCH], angRatesBody[YAW], netMomentBody );
         Kq[0]               = QuaterionRKrotationMatrix( 1.0 / 6.0, angRatesBody );
 
+        myMath::Vector3d accel;
 
         // k2
         dVelEcef[1]         = dt * AccelerationEcef( posEcef + dPosEcef[0] / 2.0, velEcef + dVelEcef[0] / 2.0, specificForceEcef );
@@ -62,9 +61,9 @@ namespace SimLib
 
 
         // Update state
-        velEcef         += ( dVelEcef[0]      + 2.0 * ( dVelEcef[1]      + dVelEcef[2]      ) + dVelEcef[3]      ) / 6.0;
-        posEcef         += ( dPosEcef[0]      + 2.0 * ( dPosEcef[1]      + dPosEcef[2]      ) + dPosEcef[3]      ) / 6.0;
-        angRatesBody    += ( dAngBodyRates[0] + 2.0 * ( dAngBodyRates[1] + dAngBodyRates[2] ) + dAngBodyRates[3] ) / 6.0;
+        velEcef      += ( dVelEcef[0]      + 2.0 * ( dVelEcef[1]      + dVelEcef[2]      ) + dVelEcef[3]      ) / 6.0;
+        posEcef      += ( dPosEcef[0]      + 2.0 * ( dPosEcef[1]      + dPosEcef[2]      ) + dPosEcef[3]      ) / 6.0;
+        angRatesBody += ( dAngBodyRates[0] + 2.0 * ( dAngBodyRates[1] + dAngBodyRates[2] ) + dAngBodyRates[3] ) / 6.0;
 
         q_nedToBody  = Kq[3] * Kq[2] * Kq[1] * Kq[0] * q_nedToBody;
         q_nedToBody.Normalize();
@@ -78,6 +77,7 @@ namespace SimLib
         const myMath::Vector3d sphericalGravity = -myMath::Constants::EARTH_MU * posEcef.Unit() / myMath::SQ( posEcef.Magnitude() );
 
         myMath::Vector3d J2Gravity;
+        myMath::Vector3d J3Gravity;
 
         const double J2Coeff = -myMath::Constants::EARTH_J2 * myMath::Constants::EARTH_MU * myMath::SQ( myMath::Constants::EARTH_EQUITORIAL_RADIUS ) / std::pow( posEcef.Magnitude(), 7u );
 
@@ -85,7 +85,13 @@ namespace SimLib
         J2Gravity[Y] = J2Coeff * posEcef[Y] * ( 6.0 * myMath::SQ( posEcef[Z] ) - 1.5 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
         J2Gravity[Z] = J2Coeff * posEcef[Z] * ( 3.0 * myMath::SQ( posEcef[Z] ) - 4.5 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
 
-        const myMath::Vector3d gravityEcef = sphericalGravity + J2Gravity;
+        const double J3Coeff = -myMath::Constants::EARTH_J3 * myMath::Constants::EARTH_MU * std::pow( myMath::Constants::EARTH_EQUITORIAL_RADIUS, 3u ) / std::pow( posEcef.Magnitude(), 9u );
+
+        J3Gravity[X] = J3Coeff * posEcef[X] * posEcef[Z] * ( 10.0 * myMath::SQ( posEcef[Z] ) - 7.5 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
+        J3Gravity[Y] = J3Coeff * posEcef[Y] * posEcef[Z] * ( 10.0 * myMath::SQ( posEcef[Z] ) - 7.5 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
+        J3Gravity[Z] = J3Coeff * ( 4.0 * myMath::SQ( posEcef[Z] ) * ( myMath::SQ( posEcef[Z] ) - 3.0 * ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) ) + 1.5 * myMath::SQ( myMath::SQ( posEcef[X] ) + myMath::SQ( posEcef[Y] ) ) );
+
+        const myMath::Vector3d gravityEcef = sphericalGravity + J2Gravity + J3Gravity;
 
         return gravityEcef;
     }
@@ -93,7 +99,7 @@ namespace SimLib
     myMath::Vector3d EOMEcef::AccelerationEcef( const myMath::Vector3d& posEcef, const myMath::Vector3d& velEcef, const myMath::Vector3d& specificForceEcef )
     {
         const myMath::Vector3d omegaEcef{ 0.0, 0.0, myMath::Constants::EARTH_ROTATION_RATE };
-        
+
         return specificForceEcef - 2.0 * myMath::CrossProduct( omegaEcef, velEcef ) - myMath::CrossProduct( omegaEcef, myMath::CrossProduct( omegaEcef, posEcef ) ) + ComputeGravityJ2( posEcef );
     }
 

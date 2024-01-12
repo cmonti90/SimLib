@@ -18,10 +18,12 @@ void signalHandler( int signum )
 namespace SimLib
 {
 
-    World::World()
+    World::World( const unsigned int runRate )
         : m_time    ( SimTime::GetInstance() )
         , m_entities()
     {
+        SimTime::setClockRate( runRate );
+
         signal( SIGINT, signalHandler );
         signal( SIGABRT, signalHandler );
     }

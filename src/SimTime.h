@@ -13,20 +13,26 @@ namespace SimLib
         ~SimTime();
         SimTime(const SimTime &);
 
-        static constexpr unsigned int SimulationRunRate = 1000u;
-
         void incrementTime();
         void finalize();
         void reset();
 
         double getTimeNow() const;
         unsigned int getCounter() const;
+        static double getClockRate();
 
         static SimTime* GetInstance();
 
+    protected:
+    friend class World;
+        static void setClockRate( const double rate );
+
     private:
-        double timeNow{0.0};
-        unsigned int counter = 0u;
+
+        double timeNow;
+        unsigned int counter;
+
+        static double ClockRate;
         
         mutable std::mutex mtx;
         mutable std::condition_variable cv;

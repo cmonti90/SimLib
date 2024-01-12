@@ -3,11 +3,21 @@
 
 namespace SimLib
 {
-    SimTime::SimTime() : timeNow( 0.0 ), counter( 0u ), mtx(), cv()
+    double SimTime::ClockRate = 1000.0; // default clock rate is 1000 Hz
+
+    SimTime::SimTime()
+        : timeNow( 0.0 )
+        , counter( 0u )
+        , mtx()
+        , cv()
     {
     }
 
-    SimTime::SimTime( const SimTime& obj ) : timeNow( obj.timeNow ), counter( obj.counter ), mtx(), cv()
+    SimTime::SimTime( const SimTime& obj )
+        : timeNow( obj.timeNow )
+        , counter( obj.counter )
+        , mtx()
+        , cv()
     {
     }
 
@@ -19,7 +29,7 @@ namespace SimLib
     {
         std::unique_lock<std::mutex> lck( mtx );
 
-        timeNow += 1.0 / static_cast<double>( SimulationRunRate );
+        timeNow += 1.0 / SimTime::ClockRate;
 
         counter++;
 
@@ -44,16 +54,26 @@ namespace SimLib
 
     double SimTime::getTimeNow() const
     {
-        std::lock_guard<std::mutex> lck( mtx );
+        std::lock_guard< std::mutex > lck( mtx );
 
         return timeNow;
     }
 
     unsigned int SimTime::getCounter() const
     {
-        std::lock_guard<std::mutex> lck( mtx );
+        std::lock_guard< std::mutex > lck( mtx );
 
         return counter;
+    }
+
+    double SimTime::getClockRate()
+    {
+        return SimTime::ClockRate;
+    }
+
+    void SimTime::setClockRate( const double rate )
+    {
+        SimTime::ClockRate = rate;
     }
 
     SimTime* SimTime::GetInstance()
