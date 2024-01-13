@@ -8,10 +8,10 @@ namespace SimLib
 {
     class SimTime
     {
-    public:
+      public:
         SimTime();
         ~SimTime();
-        SimTime(const SimTime &);
+        SimTime( const SimTime& );
 
         void incrementTime();
         void finalize();
@@ -23,19 +23,22 @@ namespace SimLib
 
         static SimTime* GetInstance();
 
-    protected:
-    friend class World;
+      protected:
         static void setClockRate( const double rate );
 
-    private:
+      private:
+        friend class World;
 
         double timeNow;
         unsigned int counter;
 
         static double ClockRate;
-        
+
         mutable std::mutex mtx;
         mutable std::condition_variable cv;
+
+        SimTime& operator=( SimTime&& ) = delete;
+        SimTime& operator=( const SimTime& ) = delete;
     };
 } // namespace SimLib
 

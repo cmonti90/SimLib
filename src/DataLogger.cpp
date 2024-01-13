@@ -8,6 +8,7 @@ namespace SimLib
 {
 
     DataLogger::DataLogger()
+    // : m_file( "OutputStat.h5", H5F_ACC_TRUNC )
     {
     }
 

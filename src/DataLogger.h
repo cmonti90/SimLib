@@ -16,7 +16,10 @@ namespace SimLib
         // void log( const std::string& data );
 
       private:
-        // std::ofstream m_file;
+        // H5::H5File m_file;
+
+        DataLogger( const DataLogger& ) = delete;
+        DataLogger& operator=( const DataLogger& ) = delete;
     };
 }
 

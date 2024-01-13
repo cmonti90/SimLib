@@ -39,7 +39,7 @@ namespace SimLib
 
     void SimTime::reset()
     {
-        std::unique_lock<std::mutex> lck( mtx );
+        std::unique_lock< std::mutex > lck( mtx );
 
         timeNow = 0.0;
         counter = 0u;

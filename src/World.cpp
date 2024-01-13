@@ -22,7 +22,7 @@ namespace SimLib
         : m_time    ( SimTime::GetInstance() )
         , m_entities()
     {
-        SimTime::setClockRate( runRate );
+        SimTime::setClockRate( static_cast< double >( runRate ) );
 
         signal( SIGINT, signalHandler );
         signal( SIGABRT, signalHandler );
