@@ -3,6 +3,7 @@
 #include "ForceEffector.h"
 
 #include <algorithm>
+#include <limits>
 
 namespace SimLib
 {
@@ -16,7 +17,7 @@ namespace SimLib
         , m_counter      ( 0u )
         , m_runRate      ( runRate )
     {
-        addModel( m_forceEffector.get(), runRate );
+        addModel( m_forceEffector.get(), std::numeric_limits< ModelOrder >::max() );
     }
 
     Entity::~Entity()

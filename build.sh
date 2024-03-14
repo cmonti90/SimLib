@@ -7,8 +7,8 @@ oldDir=${OLDPWD}
 
 export HDF5_DIR="/home/cmonti/Documents/Coding/Libraries/HDF5/1.12.0/share/cmake/hdf5"
 export HDF5_ROOT="/home/cmonti/Documents/Coding/Libraries/HDF5/1.12.0/share/cmake/hdf5"
-export MATHLIB_DIR="/home/cmonti/Documents/Coding/Libraries/myMathLib/install/lib64/cmake/mathlib"
-export PUBSUBLIB_DIR="/home/cmonti/Documents/Coding/Libraries/PubSub/install/lib64/cmake/PubSub"
+export MATHLIB_DIR="/home/cmonti/Documents/Coding/Libraries/myMathLib/install/lib/cmake/mathlib"
+export PUBSUBLIB_DIR="/home/cmonti/Documents/Coding/Libraries/PubSub/install/lib/cmake/PubSub"
 
 SCRIPT_DIR="$( dirname -- "${BASH_SOURCE[0]}" )"
 

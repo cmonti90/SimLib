@@ -24,8 +24,14 @@ namespace SimLib
     {
         SimTime::setClockRate( static_cast< double >( runRate ) );
 
+        // register signal SIGINT and signal handler
         signal( SIGINT, signalHandler );
         signal( SIGABRT, signalHandler );
+        signal( SIGFPE, signalHandler );
+        signal( SIGILL, signalHandler );
+        signal( SIGSEGV, signalHandler );
+        signal( SIGTERM, signalHandler );
+
     }
 
     World::~World()
