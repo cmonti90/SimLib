@@ -1,6 +1,7 @@
 set(target SimLib)
 set(exportedTarget SimLibTarget)
 
+set(CMAKE_CXX_STANDARD 20)
 set(version 1.0.0)
 
 include(GNUInstallDirs)
