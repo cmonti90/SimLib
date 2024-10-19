@@ -1,7 +1,7 @@
 
 #include "NormalDistribution.h"
 
-#include "Constants.h"
+#include "myMathConstants.h"
 
 #include <algorithm>
 #include <limits>

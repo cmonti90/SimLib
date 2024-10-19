@@ -3,7 +3,7 @@
 
 #include "EOM.h"
 
-#include "mathlib.h"
+#include "myMath.h"
 
 namespace SimLib
 {

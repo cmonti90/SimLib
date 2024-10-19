@@ -2,7 +2,7 @@
 
 #include "EOMEcef.h"
 
-#include "Constants.h"
+#include "myMathConstants.h"
 
 namespace SimLib
 {
@@ -122,7 +122,7 @@ namespace SimLib
         angularRatesDerivs[PITCH] =  p * ( -p * rotInertia[X][Z] - q * rotInertia[Y][Z] + r * rotInertia[Z][Z] ) - r * (  p * rotInertia[X][X] - q * rotInertia[X][Y] + r * rotInertia[X][Z] ) + netMomentBody[PITCH];
         angularRatesDerivs[YAW]   = -p * ( -p * rotInertia[X][Y] + q * rotInertia[Y][Y] - r * rotInertia[Y][Z] ) + q * (  p * rotInertia[X][X] - q * rotInertia[X][Y] + r * rotInertia[X][Z] ) + netMomentBody[YAW];
 
-        return  rotInertia.Inverse() * angularRatesDerivs;
+        return rotInertia.Inverse() * angularRatesDerivs;
     }
 
     //////////////////////////////////////////////////////
@@ -141,6 +141,7 @@ namespace SimLib
         }
 
         myMath::Matrix4d omega;
+        
         omega[0][0] = 0.0;
         omega[0][1] = -rotRates[2];
         omega[0][2] = rotRates[1];
